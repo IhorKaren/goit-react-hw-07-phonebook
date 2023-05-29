@@ -1,14 +1,11 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { nanoid } from 'nanoid';
+import { useEffect } from 'react';
 import PhonebookForm from './PhonebookForm/PhonebookForm';
 import FilterForm from './Filter/Filter';
 import Contacts from './Contacts/Contacts';
-import { filter, getFilter } from './Redux/Filter/filterSlice';
-import {
-  addContact,
-  removeContact,
-  getContacts,
-} from './Redux/Contacts/contactsSlice';
+import { filter, getFilter } from '../Redux/Filter/filterSlice';
+import { getContacts } from '../Redux/Contacts/contactsSlice';
+import { fetchContacts, addContact } from '../Redux/Operations/operations';
 import {
   Container,
   MainTitle,
@@ -21,6 +18,10 @@ export function App() {
   const contacts = useSelector(getContacts);
   const contactsFilter = useSelector(getFilter);
 
+  useEffect(() => {
+    dispatch(fetchContacts());
+  }, [dispatch]);
+
   const addContacts = (name, number) => {
     const checkName = contacts.some(
       el => el.name.toLowerCase() === name.toLowerCase()
@@ -31,16 +32,11 @@ export function App() {
     }
 
     const newContact = {
-      id: nanoid(),
       name: name,
       number: number,
     };
 
     dispatch(addContact(newContact));
-  };
-
-  const removeContacts = id => {
-    return dispatch(removeContact(id));
   };
 
   const getFilteredContacts = () => {
@@ -64,7 +60,7 @@ export function App() {
       {contacts.length === 0 ? (
         <p>You don't have contacts yet</p>
       ) : (
-        <Contacts options={filteredContacts} removeContact={removeContacts} />
+        <Contacts options={filteredContacts} />
       )}
     </Container>
   );

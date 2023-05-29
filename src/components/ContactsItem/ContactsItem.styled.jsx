@@ -11,12 +11,6 @@ const appear = keyframes`
   }
 `;
 
-const ContactsWrapper = styled.ul`
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-`;
-
 const ContactItem = styled.li`
   display: flex;
   justify-content: space-between;
@@ -45,4 +39,4 @@ const ContactButton = styled.button`
   }
 `;
 
-export { ContactsWrapper, ContactItem, ContactName, ContactButton };
+export { ContactItem, ContactName, ContactButton };
