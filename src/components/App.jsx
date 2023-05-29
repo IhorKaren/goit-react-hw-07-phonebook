@@ -1,11 +1,12 @@
 import { useSelector, useDispatch } from 'react-redux';
-import { useEffect } from 'react';
+import { filter, getFilter } from '../Redux/Filter/filterSlice';
+import {
+  useGetContactsQuery,
+  useAddContactMutation,
+} from 'Redux/Contacts/contactsApi';
 import PhonebookForm from './PhonebookForm/PhonebookForm';
 import FilterForm from './Filter/Filter';
 import Contacts from './Contacts/Contacts';
-import { filter, getFilter } from '../Redux/Filter/filterSlice';
-import { getContacts } from '../Redux/Contacts/contactsSlice';
-import { fetchContacts, addContact } from '../Redux/Operations/operations';
 import {
   Container,
   MainTitle,
@@ -13,14 +14,13 @@ import {
 } from './Container/Container.styled';
 
 export function App() {
+  const { data } = useGetContactsQuery();
+  const [addContact] = useAddContactMutation();
+
+  const contactsFilter = useSelector(getFilter);
   const dispatch = useDispatch();
 
-  const contacts = useSelector(getContacts);
-  const contactsFilter = useSelector(getFilter);
-
-  useEffect(() => {
-    dispatch(fetchContacts());
-  }, [dispatch]);
+  const contacts = data ?? [];
 
   const addContacts = (name, number) => {
     const checkName = contacts.some(
@@ -36,7 +36,7 @@ export function App() {
       number: number,
     };
 
-    dispatch(addContact(newContact));
+    addContact(newContact);
   };
 
   const getFilteredContacts = () => {
@@ -60,7 +60,7 @@ export function App() {
       {contacts.length === 0 ? (
         <p>You don't have contacts yet</p>
       ) : (
-        <Contacts options={filteredContacts} />
+        <Contacts array={filteredContacts} />
       )}
     </Container>
   );
